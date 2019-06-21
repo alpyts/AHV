@@ -1,4 +1,4 @@
-![](/images/itu.png)
+<div style="text-align:center"><img src="/images/itu.png" /></div>
 
 
 
