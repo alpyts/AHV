@@ -109,7 +109,19 @@ The main value of Housing Prices Index and Unit Prices would be the expecting co
 
 This study also prove this on the next paragraphs.
 
+###### References
+
+1. Linear Regression, Selva Prabhakaran
+2. Linear Regression with Boston Housing Data set, Sukesh Kumar Pabba
+3. Introduction to Forecasting with ARIMA in R, Ruslana Dalinina
+4. https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average
+5. https://en.wikipedia.org/wiki/Autocorrelation
+6. Overview Of The Real Estate And Housing Industry , May 2018
+7. Kaya, Aslı , “Determining of The Factors Affects Housing Price in Turkey with Hedonic Price Model ”, CBRT Expertise Qualification Thesis Unpublished,Ankara , 2012
+8. Data Source : TURKSTAT
 
 
+***
 
-[Details](https://github.com/alpyts/AHV "Automatic Housing Valuation")
+
+[For More Details and Project](https://github.com/alpyts/AHV "Automatic Housing Valuation")
