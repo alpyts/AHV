@@ -1,18 +1,9 @@
-<center>![](itu.png)</center>
+![](itu.png)
 
-
-\
-\
-\
-\
-\
 
 
 <center>**EXPLAINING ISTANBUL HOUSING PRICE WITH ECONOMIC INDICATORS & FORECASTING UNIT PRICES CHANGE**</center>\
 
-\
-\
-\
 
 
 
@@ -20,52 +11,50 @@
 <center>*516171003*</center>\
 
 
-\
-\
 
 
-### Introduction\
+### Introduction
 
 
-#### Problem Question\
+#### Problem Question
 
 
-1. How The Economic Indicators Affect on Housing Unit Price at Istanbul?\
+1. How The Economic Indicators Affect on Housing Unit Price at Istanbul?
 
-2. Which indicators more dominant on the prices?\
+2. Which indicators more dominant on the prices?
 
-3. What is the equation for Istanbul Unit Housing Price?\
+3. What is the equation for Istanbul Unit Housing Price?
 
-4. What will be the housing price for 6 months?\
+4. What will be the housing price for 6 months?
 
 
-#### Literature Review\
+#### Literature Review
 
 
 * The construction industry and other related sub industries are the most crucial aspects of the economy The
 Turkish housing industry has achieved fast growth in the past fifteen years The macroeconomic importance of the
 construction industry arises from its multiplier effect It sets 250 sub industries in motion with impacts on both
-growth and employment.\
+growth and employment.
 
 
 * Housing and related interests make up a significant portion of the construction industry in our country. The industry’s growth rate is influenced by booms/stagnation observed in housing demand and sales. 
-The industry’s sensitivity to the total national growth is also high.\
+The industry’s sensitivity to the total national growth is also high.
 
 
 
-* As well the price of a home in the housing sector is determined by the balance of housing supply and demand In the short term, the supply of housing is for the most part fixed, meaning that the main variable in determining housing prices is the rise or decline in demand Consequently, in the short term, rising demand for housing causes prices to increase and declining demand causes them to fall.\ 
+* As well the price of a home in the housing sector is determined by the balance of housing supply and demand In the short term, the supply of housing is for the most part fixed, meaning that the main variable in determining housing prices is the rise or decline in demand Consequently, in the short term, rising demand for housing causes prices to increase and declining demand causes them to fall.
 
 
 ***
 
 
-\
+
 
 
 
 
 In this study Section - 1 includes "The Regression Analysis" to explain the dependent variable which is **Unit Housing Price in Istanbul** with independent variables below in the table and tried to find **the highest and most effective model** that explaining unit housing price.
-In Section B, "The ARIMA Analysis" used for forecasting the "Housing Price Changes In Istanbul" for six months. The summary of study as in the below following chart.\
+In Section B, "The ARIMA Analysis" used for forecasting the "Housing Price Changes In Istanbul" for six months. The summary of study as in the below following chart.
 
 
  
@@ -79,7 +68,7 @@ Explaining Istanbul Housing Unit Price   | Forecasting Istanbul Housing Price's 
 ***
  
 
-Some variables and description in the below chart.\
+Some variables and description in the below chart.
  
 
 
@@ -105,20 +94,17 @@ Some variables and description in the below chart.\
 
 
  
- **Notes : IST_CNST_PRMT - IST_OCCP_PRMT forward some different periods 2,3,4,6,9 etc.**\
+ **Notes : IST_CNST_PRMT - IST_OCCP_PRMT forward some different periods 2,3,4,6,9 etc.**
 
 
-\
-\
 
 
 ***
 
-\
 
 
 For the reason why using both *Price Index* and *Unit Prices* main purpose of the using both Price Index and Prices on the data set in order to see the correlation between Monthly Property Price Index and Unit Prices and cross check our observations.\
-It can easily expect the correlation coefficient aproximately ~ 99%\
-The main value of Housing Prices Index and Unit Prices would be the expecting correlation coefficient which is approximately 0.96 but the monthly percentage changes between them wouldn't be the bigger than 80%.\
+It can easily expect the correlation coefficient aproximately ~ 99%
+The main value of Housing Prices Index and Unit Prices would be the expecting correlation coefficient which is approximately 0.96 but the monthly percentage changes between them wouldn't be the bigger than 80%.
 
-This study also prove this on the next paragraphs.\
+This study also prove this on the next paragraphs.
