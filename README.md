@@ -112,4 +112,4 @@ This study also prove this on the next paragraphs.
 
 
 
-[Details of](https://github.com/alpyts/AHV "Automatic Housing Valuation")
+[Details](https://github.com/alpyts/AHV "Automatic Housing Valuation")
