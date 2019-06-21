@@ -2,13 +2,13 @@
 
 
 
-<center>**EXPLAINING ISTANBUL HOUSING PRICE WITH ECONOMIC INDICATORS & FORECASTING UNIT PRICES CHANGE**</center>
+# EXPLAINING ISTANBUL HOUSING PRICE WITH DOMINANT INDICATORS & FORECASTING UNIT PRICES CHANGE
 
 
 
 
 <center>Alparslan YARIKTAS</center>
-<center>*516171003*</center>
+<center>516171003</center>
 
 
 
@@ -31,18 +31,18 @@
 #### Literature Review
 
 
-* The construction industry and other related sub industries are the most crucial aspects of the economy The
+- The construction industry and other related sub industries are the most crucial aspects of the economy The
 Turkish housing industry has achieved fast growth in the past fifteen years The macroeconomic importance of the
 construction industry arises from its multiplier effect It sets 250 sub industries in motion with impacts on both
 growth and employment.
 
 
-* Housing and related interests make up a significant portion of the construction industry in our country. The industry’s growth rate is influenced by booms/stagnation observed in housing demand and sales. 
+- Housing and related interests make up a significant portion of the construction industry in our country. The industry’s growth rate is influenced by booms/stagnation observed in housing demand and sales. 
 The industry’s sensitivity to the total national growth is also high.
 
 
 
-* As well the price of a home in the housing sector is determined by the balance of housing supply and demand In the short term, the supply of housing is for the most part fixed, meaning that the main variable in determining housing prices is the rise or decline in demand Consequently, in the short term, rising demand for housing causes prices to increase and declining demand causes them to fall.
+- As well the price of a home in the housing sector is determined by the balance of housing supply and demand In the short term, the supply of housing is for the most part fixed, meaning that the main variable in determining housing prices is the rise or decline in demand Consequently, in the short term, rising demand for housing causes prices to increase and declining demand causes them to fall.
 
 
 ***
