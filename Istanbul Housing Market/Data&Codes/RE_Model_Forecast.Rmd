@@ -1,0 +1,1293 @@
+---
+title: "Real Estate Modelling & Forecasting"
+author: "Alparslan YARIKTAS"
+date: "24.05.2019"
+output: 
+  word_document: 
+    fig_caption: yes
+    fig_height: 5.5
+    fig_width: 9
+    highlight: espresso
+    keep_md: yes
+    toc: yes
+    toc_depth: 4
+  html_notebook: 
+    code_folding: hide
+    fig_caption: yes
+    fig_height: 5.5
+    fig_width: 8
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+  html_document: 
+    fig_caption: yes
+    fig_height: 5.5
+    fig_width: 9
+    highlight: espresso
+    number_sections: yes
+    theme: paper
+    toc: yes
+    toc_depth: 4
+---
+
+
+<center>![](itu.png)</center>\
+
+
+\
+\
+\
+\
+\
+
+
+<center>**EXPLAINING ISTANBUL HOUSING PRICE WITH ECONOMIC INDICATORS & FORECASTING UNIT PRICES CHANGE**</center>\
+
+\
+\
+\
+
+
+
+<center>Alparslan YARIKTAS</center>\
+<center>*516171003*</center>\
+
+
+\
+\
+
+
+### Introduction\
+
+
+#### Problem Question\
+
+
+1. How The Economic Indicators Affect on Housing Unit Price at Istanbul?\
+
+2. Which indicators more dominant on the prices?\
+
+3. What is the equation for Istanbul Unit Housing Price?\
+
+4. What will be the housing price for 6 months?\
+
+
+#### Literature Review\
+
+
+* The construction industry and other related sub industries are the most crucial aspects of the economy The
+Turkish housing industry has achieved fast growth in the past fifteen years The macroeconomic importance of the
+construction industry arises from its multiplier effect It sets 250 sub industries in motion with impacts on both
+growth and employment.\
+
+
+* Housing and related interests make up a significant portion of the construction industry in our country. The industry’s growth rate is influenced by booms/stagnation observed in housing demand and sales. 
+The industry’s sensitivity to the total national growth is also high.\
+
+
+
+* As well the price of a home in the housing sector is determined by the balance of housing supply and demand In the short term, the supply of housing is for the most part fixed, meaning that the main variable in determining housing prices is the rise or decline in demand Consequently, in the short term, rising demand for housing causes prices to increase and declining demand causes them to fall.\ 
+
+
+***
+
+
+\
+
+
+
+
+In this study Section - 1 includes "The Regression Analysis" to explain the dependent variable which is **Unit Housing Price in Istanbul** with independent variables below in the table and tried to find **the highest and most effective model** that explaining unit housing price.
+In Section B, "The ARIMA Analysis" used for forecasting the "Housing Price Changes In Istanbul" for six months. The summary of study as in the below following chart.\
+
+
+ 
+ 
+
+**Section 1 - Cross Section**            | **Section 2 - Time Series**
+-------------------------------------    | -----------------------------------
+Regression Analysis                      | Auto Regressive Integrated Moving Average Analysis
+Explaining Istanbul Housing Unit Price   | Forecasting Istanbul Housing Price's Change Next Month
+
+***
+ 
+
+Some variables and description in the below chart.\
+ 
+
+
+
+**VARIABLES**    | **DESCRIPTION**
+-----------------|--------------------------------------------
+**DATE**         | Monthly Date from 2013 to 2019
+**IST_RPPI**     | Istanbul Residential Property Price Index
+**IST_PRC**      | Istanbul Housing Unit Price TL/m²
+**IST_CNST_PRMT**| Construction Permits
+**IST_OCCP_PRMT**| Occupational Permits
+**MG_RT**        | Mortgage Credit Rates
+**IST_FGR_SL**   | Istanbul Housing Sales to Only Foreigners 
+**IST_PRP_SL**   | Istanbul Total Housing Sales
+**IST_MRTG_SL**  | Istanbul Housing Sales by Using Mortgage Loan
+**CNSTR_TRST**   | Construction Trust Index
+**IST_CPI**      | Istanbul Consumer Price Index
+**TR_PPI**       | Turkey Producer Price Index
+**USD_RT**       | USD Buying Exchange Rate
+**RNT_CPI**      | IST Rent Consumer Price Index
+**NEMP_RT**      | Unemployment Rate
+
+
+
+ 
+ **Notes : IST_CNST_PRMT - IST_OCCP_PRMT forward some different periods 2,3,4,6,9 etc.**\
+
+
+\
+\
+
+
+***
+
+\
+
+
+For the reason why using both *Price Index* and *Unit Prices* main purpose of the using both Price Index and Prices on the data set in order to see the correlation between Monthly Property Price Index and Unit Prices and cross check our observations.\
+It can easily expect the correlation coefficient aproximately ~ 99%\
+The main value of Housing Prices Index and Unit Prices would be the expecting correlation coefficient which is approximately 0.96 but the monthly percentage changes between them wouldn't be the bigger than 80%.\
+
+This study also prove this on the next paragraphs.\
+ 
+
+
+
+### Cross Section\
+ 
+#### Setting The Libraries\
+
+Before start the study, the libraries should be import to get rid of the errors and help to analyze all in one for study.
+
+```{r Library }
+library(readr)
+library(ggplot2)
+library(mlbench)
+library(corrplot)
+library(Amelia)
+library(caret)
+library(plotly)
+library(caTools)
+library(reshape2)
+library(dplyr)
+library(knitr)
+library(ggplot2)
+library(forecast)
+library(tseries)
+library(astsa)
+library(readr)
+```
+
+
+#### Data Import\
+
+
+
+This project include different studies that divide main values and percentage change according to the previous months.\
+
+
+**IST_RPPI_MODEL**            | **IST_RPPI_MODEL_CG**
+------------------------------|-----------------------------------
+Main Value of All variables   | Monthly Percentage Changes Values(%)
+
+
+\
+
+
+```{r Data Imp }
+library(readr)
+IST_RPPI_MODEL <- read_csv("IST_RPPI_MODEL.csv", 
+                           col_types = cols(DATE = col_date(format = "%d.%m.%Y")))
+IST_RPPI_MODEL_CG <- read_csv("IST_RPPI_MODEL_CG.csv", 
+                              col_types = cols(DATE = col_date(format = "%d.%m.%Y")))
+#View(IST_RPPI_MODEL)
+#View(IST_RPPI_MODEL_CG)
+```
+
+#### Data Type Observation\
+
+
+All the variables according to data type is *"dbl"* that is related with numeric values except "Date".\
+The study is not going to include **dates** in any model at Section-1 on Regression Analysis. 
+Seeing the data types and first 5 column is also important for the data set what imported correctly.\
+
+```{r Data Type }
+head(IST_RPPI_MODEL)
+#str(IST_RPPI_MODEL) - to see the data type
+#for the other dataset 
+#str(IST_RPPI_MODEL_CG)
+```
+
+
+
+
+#### Understanding Data\ 
+
+In order to understand and examine data generally use five number summary.\
+*Five Number Summary* shows *median*, *mean*, *min-max* and *Q1 & Q3* values.\
+This may help us to mining and eliminating and understanding the structure of data and classifying the observations.\
+
+**For example :**\
+
+
+
+* Housing Unit Prices in Istanbul has minimum value which is 2064 ; Mean Value is 3708 and also the Median Value is 3922. Q3 is 4562 and Max. value 5123. It can be easily understanding this data classified with a good range because there is not any extreme observation.\
+
+
+* Istanbul Unit Price Changes  min.value -1.266, max.value 3.756, mean 1.285, median 1.366\
+
+
+* Total Istanbul Housing Sales min.value 11903, max.value 27156, mean value 19512, median value 19305. 3rd Quartile value is 21213 This value shows us there is not any extreme circumstances.\
+
+
+* When it comes to mortgage rates,\
+
+
+
+Min.|1st Q.|Median|Mean|3rd Q.|Max. 
+----|-------|------|----|-------|----
+8.30|11.00  |12.20 |13.11|13.93|28.99
+
+
+
+\
+
+
+
+The situation about the outliers will be scrutinized next paragraphs.\
+
+
+
+1. Unit Housing Price\
+```{r}
+summary(IST_RPPI_MODEL$IST_PRC)
+```
+
+2. Residential Housing Price Index\
+```{r}
+summary(IST_RPPI_MODEL$IST_RPPI)
+```
+
+3. Property Sales\
+```{r}
+summary(IST_RPPI_MODEL$IST_PRP_SL)
+```
+
+4. Foreigner Sales\
+```{r}
+summary(IST_RPPI_MODEL$IST_FGR_SL)
+```
+
+5. Sales by Mortgage\
+```{r}
+summary(IST_RPPI_MODEL$IST_MRTG_SL)
+```
+
+6. Occupational Permits forward 9 months\
+```{r}
+summary(IST_RPPI_MODEL$IST_OCCP_PT_9)
+```
+
+7. Consumer Price Index\
+```{r}
+summary(IST_RPPI_MODEL$IST_CPI)
+```
+
+8. Mortgage Rates\
+```{r}
+summary(IST_RPPI_MODEL$MG_RT)
+```
+
+9. Construction Permits\
+```{r}
+summary(IST_RPPI_MODEL$IST_CNST_PT)
+```
+10. Rent Consumer Price Index\
+```{r}
+summary(IST_RPPI_MODEL$RNT_CPI)
+```
+11. Turkey Producer Price Index\
+```{r}
+summary(IST_RPPI_MODEL$TR_PPI)
+```
+12. USD Currency Rates\
+```{r}
+summary(IST_RPPI_MODEL$USD_RT)
+```
+
+
+```{r Five-Number Summary}
+#summary(IST_RPPI_MODEL)
+```
+
+\
+
+
+```{r Changes Summary}
+#summary(IST_RPPI_MODEL_CG)
+#summary(IST_RPPI_MODEL_CG$IST_RPPI)
+#summary(IST_RPPI_MODEL_CG$IST_FGR_SL)
+#summary(IST_RPPI_MODEL_CG$IST_MRTG_SL)
+#summary(IST_RPPI_MODEL_CG$IST_OCCP_PT_9)
+#summary(IST_RPPI_MODEL_CG$IST_CPI)
+#summary(IST_RPPI_MODEL_CG$MG_RT)
+```
+
+\
+
+
+The values with box plot In addition to numeric table, Housing Sales also be showed with box plot.\
+
+```{r BoxPlot }
+boxplot(IST_RPPI_MODEL$IST_PRC, main = "Housing Prices",
+        sub=paste("Outlier rows:  ", boxplot.stats(IST_RPPI_MODEL$IST_PRC)$out))
+boxplot(IST_RPPI_MODEL$IST_MRTG_SL, main = "Housing Sales By Using Loan", 
+        border = par("fg"), 
+        sub=paste("Outlier Rows:  ", boxplot.stats(IST_RPPI_MODEL$IST_MRTG_SL)$out))
+boxplot(IST_RPPI_MODEL$MG_RT, main = "Mortgage Rates",
+        sub=paste("Outlier Rows:  ", boxplot.stats(IST_RPPI_MODEL$MG_RT)$out))
+boxplot(IST_RPPI_MODEL$IST_RPPI, main = "Property Price Index",
+        sub=paste("Outlier Rows:  ", boxplot.stats(IST_RPPI_MODEL$IST_RPPI)$out))
+boxplot(IST_RPPI_MODEL$IST_FGR_SL, main = "Foreigner Sales",
+        sub=paste("Outlier Rows:  ", boxplot.stats(IST_RPPI_MODEL$IST_FGR_SL)$out))
+boxplot(IST_RPPI_MODEL$IST_OCCP_PT_9, main = "Occupational Permits forward 9 months",
+        sub=paste("Outlier Rows:  ", boxplot.stats(IST_RPPI_MODEL$IST_OCCP_PT_9)$out))
+boxplot(IST_RPPI_MODEL$USD_RT, main = "USD Exchange Rate",
+        sub=paste("Outlier Rows:  ", boxplot.stats(IST_RPPI_MODEL$USD_RT)$out))
+boxplot(IST_RPPI_MODEL$RNT_CPI, main = "Rent Consumer Price Index",
+        sub=paste("Outlier Rows:  ", boxplot.stats(IST_RPPI_MODEL$RNT_CPI)$out))
+```
+
+```{r Outliers}
+MG_RT_OUT <- boxplot.stats(IST_RPPI_MODEL$MG_RT)$out
+MRTG_SL_OUT <- boxplot.stats(IST_RPPI_MODEL$IST_MRTG_SL)$out
+data.frame(MG_RT_OUT, MRTG_SL_OUT)
+
+IST_FGR_SL_OUT <- boxplot.stats(IST_RPPI_MODEL$IST_FGR_SL)$out
+IST_OCCP_PT_9_OUT <- boxplot.stats(IST_RPPI_MODEL$IST_OCCP_PT_9)$out
+USD_RT_OUT <- boxplot.stats(IST_RPPI_MODEL$USD_RT)$out
+
+data.frame(IST_FGR_SL_OUT, IST_OCCP_PT_9_OUT, USD_RT_OUT)
+
+```
+\
+
+
+
+
+**Mortgage Rates and Mortgage Sales have 5 outliers, Foreigner Sales 6,  Occupational permits 1 and 2 outliers in Usd Exchange Rates.**\
+
+
+The outliers distracting model confidence, otliers should remove from dataset. In the study outliers used because of the size.\
+
+
+An Alternative solution may offer remove the outliers and **fill with median value** of column.\
+
+
+
+When It comes to *dependent - independent variables*, It can be easily showing distribution in scatter plot.\
+
+
+
+**For example :**\
+
+
+Some distrubitons about Housing Price and other variables showing with the scatter plot.\
+
+
+
+```{r ScatterPlot }
+scatter.smooth(x = IST_RPPI_MODEL$MG_RT, 
+               y = IST_RPPI_MODEL$IST_PRC, 
+               main = "Housing Price ~ Mortgage Rates")
+scatter.smooth(x = IST_RPPI_MODEL$IST_PRP_SL, 
+               y = IST_RPPI_MODEL$IST_PRC, 
+               main = "Housing Price ~ Housing Sales")
+scatter.smooth(x = IST_RPPI_MODEL$RNT_CPI, 
+               y = IST_RPPI_MODEL$IST_PRC, 
+               main = "Housing Price ~ Rent Price Index")
+```
+
+* This plot also sort out to correlation.\
+* The relation between price & mortgage rates also positive correlation but taking into consideration that supply and demand equilibrium, expecting when mortgage rates down prices would be higher because of the demand would increasing.\
+* When it comes to Turkey considering that there is an imbalance situation. People always wanting to get a housing neither mortgage rates increase nor mortgage rates decrease.\
+* The study emphasis this situation on next paragraphs at the Correlation.\
+
+
+In order to see the missing observations, easily get this code by using *Amelia Package*. In this study, any missing value the model including. \
+
+
+
+#### See The Missing Values\ 
+
+```{r Missing Values }
+# in order to see the sum of missing values
+# colSums(is.na(IST_RPPI_MODEL))
+# for show the plot of the missing values
+missmap(IST_RPPI_MODEL, col=c('red', 'green'), 
+        y.at=1, y.labels = '', legend = TRUE)
+# missmap(IST_RPPI_MODEL_CG, col=c('red', 'green'), y.at=1, y.labels = '', legend = TRUE)
+# to fill the median value if the missing values were in dataset
+# IST_RPPI_MODEL$...[is.na(IST_RPPI_MODEL$...)] <- median(IST_RPPI_MODEL$..., na.rm = TRUE)
+```
+
+**Note**: *The study doesn't consist any missing observations. On the some literature text that filling the missing values with median value of the variables.*\
+
+
+
+#### Show The Correlation\
+
+
+Correlation table including related coefficients below in the chart.\
+
+
+
+```{r Correlation Table Price }
+# coefficients tables
+res_mn <- cor(select(IST_RPPI_MODEL, -DATE))
+res_mn <- data.frame(round(res_mn, 2))
+head(res_mn, n=6)
+```
+
+This table show us the correlation coefficients between Istanbul Unit Housing Prices and the other variables.\
+
+The best correlation equivalent in order to explain the housing unit prices :\
+
+
+1. RNT_CPI : 0.96
+
+2. IST_CPI : 0.93
+
+3. USD_RT : 0.88
+
+4. TR_PPI : 0.83
+
+5. NEMP_RT : 0.64
+
+6. IST_FGR_SL : 0.64
+
+7. MG_RT : 0.59
+
+8. IST_MRTG_SL : -0.55
+
+9. IST_OCCP_PT_9 : 0.44
+
+10. CNSTR_TRST : -0.37
+
+11. IST_CNST_PT : -0.16\
+
+
+
+The Index which are Rent Consumer Price Index, Istanbul Consumer Price Index, USD Rate and Turkey Producer Price Index affecting The Housing Unit Prices very strongly correlated. So that try to find the best model in this study, include strong correlated variables in the model on next paragraphs.\
+
+
+
+```{r Correlation Table Changes }
+res_cg<- cor(select(IST_RPPI_MODEL_CG, -DATE))
+res_cg <- data.frame(round(res_cg, 2))
+head(res_cg, n=1)
+```
+
+This study also proved that the marker of Price and Price Index is positive correlated but first case Unit Price and Price Index correlated equal, The correlation coefficient between Unit Price Changes and Property Price Index Changes nearly 0.62, different from each others.\
+
+
+
+```{r Correlation Plot }
+## plot the correlations
+corrplot(cor(select(IST_RPPI_MODEL, -DATE)), 
+         method = "square", type = "upper", sig.level = .01)
+```
+
+```{r Correlation Plot Changes }
+#corrplot(cor(select(IST_RPPI_MODEL_CG, -DATE)), 
+#         method = "square", addrect = 2, sig.level = .01, type #= "upper")
+```
+
+
+1. The main value's correlation coefficient was ~ 1.00 but in this case the monthly changes different than each others  when considered the actual values, the monthly change's coefficients different from main values. First, we look up the Unit Price and Property Price Index's coefficient is approximately ~ 100% but we look the monthly change of the both variables coefficient is ~62%, So when we consider why the monthly changes different than main values.\
+
+
+This two main dependent variables is the same. It can be explained that Price Index is publishing after The Unit Prices maybe 1-2 month, Price Index can be influenced by the other things. According to housing market the index publishing after 1 and 2 months published unit prices and Index be affecting from other main Index like Rent, CPI, PPI etc.\
+
+
+2. Secondly, we should look the Construction-Occupational Permits the best correlation with Housing Prices is
+
++ The direct and not postponed value of Construction Permits ~ -16%
++ Held over value for 9 months of Occupational Permits ~ 44%\
+
+*So, It would be think that when a construction start and all permits be get , how long will this pre-construction and construction process extend or when this new supply get in the market? The study also show that **Housing Market Prices,** much more influenced by Occupational Permits which published data forward for 9 months.*\
+
+
+
+#### Showing The Density\
+
+```{r Density Plot 1 }
+ggplotly(IST_RPPI_MODEL %>%
+             ggplot(aes(IST_PRC)) +
+             stat_density() +
+             theme_light())
+```
+
+```{r Density Plot 2 }
+ggplotly(IST_RPPI_MODEL_CG%>%
+             ggplot(aes(IST_PRC)) +
+             stat_density() +
+             theme_light())
+```
+
+ 
+
+The Property Price has two major range -bimodal distribution- one of the between 55-60, the other is 95-100 because of the time process .\
+Prices always getting increase time to time and also the monthly price changes have one modal distribution. It can be easily reach mod, median, mean values show in "Five Number Summary section".\
+
+
+Istanbul Housing Price monthly change has one modal,normal distribution. Showing The Five Number Summary of Price and Price Change belowing chart.\
+
+
+```{r Summary 3 }
+summary(IST_RPPI_MODEL$IST_PRC)
+```
+
+```{r Summary 4 }
+summary(IST_RPPI_MODEL_CG$IST_PRC)
+```
+
+
+#### Seeing The Correlation Plot\
+
+In order to plot all variables related with the Housing Prices :\
+
+
+
+```{r Correlation Relationship }
+
+IST_RPPI_MODEL %>%
+    select(c(IST_PRC, MG_RT, IST_FGR_SL, IST_PRP_SL, 
+             IST_MRTG_SL, CNSTR_TRST, RNT_CPI, 
+             IST_CPI, TR_PPI, USD_RT, 
+             NEMP_RT, IST_CNST_PT, IST_OCCP_PT_9)) %>%
+    melt(id.vars = "IST_PRC") %>%
+    ggplot(aes(x = value, y = IST_PRC, colour = variable)) +
+    geom_point(alpha = 0.7) +
+    stat_smooth(aes(colour = "black")) +
+    facet_wrap(~ variable, scales = "free", ncol = 3) +
+    labs(x = "Variable Value", 
+         y = "Istanbul Housing Price") +
+    theme_minimal()
+```
+
+```{r }
+#IST_RPPI_MODEL_CG %>%
+#    select(c(IST_PRC, MG_RT, IST_FGR_SL, 
+#    IST_PRP_SL, IST_MRTG_SL, CNSTR_TRST, 
+#    RNT_CPI, IST_CPI, TR_PPI, USD_RT, 
+#    NEMP_RT, IST_CNST_PT, IST_OCCP_PT_9)) %>%
+#    melt(id.vars = "IST_PRC") %>%
+#    ggplot(aes(x = value, y = IST_PRC, colour = variable)) +
+#    geom_point(alpha = 0.7) +
+#    stat_smooth(aes(colour = "black")) +
+#    facet_wrap(~ variable, scales = "free", ncol = 3) +
+#    labs(x = "Variable Value",
+#    y = "Istanbul Housing Price Change") +
+#    theme_minimal()
+```
+
+
+The correlation between all variables *Positive & Negative Correlation* would easily showed above a plot with Istanbul Housing Prices.\
+
+
+**Positive Corelation**| **Negative Correlation**
+-------------------    |--------------------
+Mortgage Rates         | Construction Trust Index
+Foreigner Sales        | Mortgage Sales
+Rent CPI               |
+USD Rate               |
+TR PPI                 |
+IST CPI                |
+NEMP Rate              |
+
+
+\
+
+
+UNEMP rate is also expecting negative correlation because the purchasing power is decreasing so anyone would not want to buy a house this means demand will decrease and price should be expecting down. In this case this not go through what we expecting. 
+
+#### Building A Model (Train-Test)\
+
+##### Setting a Seed Random Number\
+
+Seed number should be selected to determine the same results, accuracy, errors every run command. In this study, 2019 is specified.\
+
+```{r }
+#set.seed(2019)
+#split <- sample.split(IST_RPPI_MODEL, SplitRatio = 0.70)
+#train_mn <- subset(IST_RPPI_MODEL, split == FALSE)
+#test_mn  <- subset(IST_RPPI_MODEL, split == FALSE)
+#set.seed(2019)
+#split <- sample.split(IST_RPPI_MODEL_CG, SplitRatio = 0.70)
+#train_cg <- subset(IST_RPPI_MODEL_CG, split == TRUE)
+#test_cg  <- subset(IST_RPPI_MODEL_CG, split == FALSE)
+```
+Split is meaning the portion of the training data. For a study train set determined 0.70 of all data set this should be increase in small data sets as well test set specified 0.30\
+
+**Notes : Split and seed number didn't use for the model why the model is weak for observations ~ 72**\
+
+
+##### Building Different Models and See Residuals\ 
+
+
+```{r Model 1 }
+model1_mn <- lm(IST_PRC ~ MG_RT + IST_FGR_SL +  
+                    IST_MRTG_SL + CNSTR_TRST +
+                    RNT_CPI + USD_RT + 
+                    IST_CNST_PT +  IST_OCCP_PT_9 , 
+                data = IST_RPPI_MODEL)
+summary(model1_mn)
+```
+
+
+Model's P-values not good what expecting, Model-1 says us only Rent CPI is affecting Price, The data including both one digit numbers and four&five digit numbers. An alternative solution to get rid of big numbers to start logarithm process for big numbers.\
+Built a new one more model which is **Model-2 with logarithm process.**\
+
+
+```{r Model 2 }
+model2_mn <- lm(log10(IST_PRC) ~ MG_RT + log10(IST_FGR_SL) +  
+                    log10(IST_MRTG_SL) + CNSTR_TRST + RNT_CPI + USD_RT + 
+                    log10(IST_CNST_PT) +  log10(IST_OCCP_PT_9) , 
+                data = IST_RPPI_MODEL)
+summary(model2_mn)
+```
+
+
+**Model-2** increased the p-value of variables. When looking model-2, there are four different variables in confidence p-values as well USD Rate close to line.\
+
+In Model-2 used logarithm on three or more digit values.\
+
+
+```{r Model 3 }
+model3_mn <- lm(log10(IST_PRC) ~ log10(MG_RT) + log10(IST_FGR_SL) +  
+                    log10(IST_MRTG_SL) + log10(CNSTR_TRST) + 
+                    log10(RNT_CPI) + log10(USD_RT) + 
+                    log10(IST_CNST_PT)  , 
+                data = IST_RPPI_MODEL)
+summary(model3_mn)
+```
+
+
+**In Model-3**, all variables reduced with logarithm so that decrease digits but in this model there isn't enough confidence than Model-2. So keep continuous with Model-2 and remove the highest p-value which is mortgage rates plus mortgage sales. Add the property sales rather than mortgage sales.\
+
+
+```{r Model 4 }
+model4_mn <- lm(log10(IST_PRC) ~ log10(IST_FGR_SL) +  
+                    log10(IST_PRP_SL) + CNSTR_TRST + RNT_CPI + USD_RT + 
+                    log10(IST_CNST_PT) +  log10(IST_OCCP_PT_9) , 
+                data = IST_RPPI_MODEL)
+summary(model4_mn)
+```
+
+
+When considered the Construction Trust Index's p-value so higher than others. It can be remove from model, try to find more accuracy model in Model-5.\
+
+
+```{r Model 5 }
+model5_mn <- lm(log10(IST_PRC) ~ log10(IST_FGR_SL) +  
+                    log10(IST_PRP_SL)  + RNT_CPI + USD_RT + 
+                    log10(IST_CNST_PT) +  log10(IST_OCCP_PT_9) , 
+                data = IST_RPPI_MODEL)
+summary(model5_mn)
+```
+
+
+**Model-5** good correlated to explain the prices but It is not enough because of the big p-values. In model-6, get rid of the Occupational Permits.\
+
+
+```{r Model 6 }
+model6_mn <- lm(log10(IST_PRC) ~ log10(IST_FGR_SL) +  
+                    log10(IST_PRP_SL)  + RNT_CPI + USD_RT + 
+                    log10(IST_CNST_PT)  , 
+                data = IST_RPPI_MODEL)
+summary(model6_mn)
+```
+
+
+When Supply-Demand Equilibrium considered: Property Sales expecting increase, Price would be get higher. Because of the confidence level of Property Sales the variable's marker say us the negative situation. In Model-7, removed the Property Sales.\
+
+
+
+```{r Model 7 }
+model7_mn <- lm(log10(IST_PRC) ~ log10(IST_FGR_SL) +  
+                    RNT_CPI + USD_RT + 
+                    log10(IST_CNST_PT)  , 
+                data = IST_RPPI_MODEL)
+summary(model7_mn)
+```
+
+
+**Model-7** is final outcome in which more comprehensive and meaningfully than other models. The model prove that :
+
+* If Total Foreigner Sale increase than Price would be higher
+* If Rent Consumer Price Index would be higher than Price get increase
+* When it come to USD Rate, considered the Housing Market at this moment. USD currency extremely high and Housing Prices getting decrease. So this model actually prove that.
+* Construction Permits affecting housing prices positive.
+
+
+
+* Another different model for explaining **Mortgage Sales** :\
+
+
+
+
+```{r Model 8 }
+model8_mn <- lm(log10(IST_MRTG_SL) ~ MG_RT + log10(IST_FGR_SL) + 
+                    log10(IST_PRC) + IST_RPPI +
+                    CNSTR_TRST + RNT_CPI + IST_CPI + 
+                    TR_PPI + USD_RT + NEMP_RT + 
+                    log10(IST_CNST_PT) +  
+                    log10(IST_OCCP_PT_9) , 
+                data = IST_RPPI_MODEL)
+summary(model8_mn)
+```
+
+
+The model can't explain what the study want. Remove the high p-values which are IST_RPPI and CNSTR_TRST from model.\
+
+
+```{r Model 9 }
+model9_mn <- lm(log10(IST_MRTG_SL) ~ MG_RT + log10(IST_FGR_SL) + 
+                    log10(IST_PRC) + 
+                    RNT_CPI + IST_CPI + 
+                    TR_PPI + USD_RT + NEMP_RT + 
+                    log10(IST_CNST_PT) +  
+                    log10(IST_OCCP_PT_9) , 
+                data = IST_RPPI_MODEL)
+summary(model9_mn)
+## estimates are the coefficient of the variables in a equation. y = ax + by + cz 
+```
+
+
+Remove from model USD_RT, NEMP_RT, CNST & OCCP Permits, RNT_CPI\
+
+
+```{r Model 10 }
+model10_mn <- lm(log10(IST_MRTG_SL) ~ MG_RT + log10(IST_FGR_SL) + 
+                    log10(IST_PRC) + 
+                    IST_CPI + 
+                    TR_PPI , 
+                data = IST_RPPI_MODEL)
+summary(model10_mn)
+```
+
+
+*Final step IST_PRC and IST_CPI are not in confidence p-value, remove from model.*\
+
+
+```{r Model 11 }
+model11_mn <- lm(log10(IST_MRTG_SL) ~ MG_RT + log10(IST_FGR_SL) +  
+                    TR_PPI , 
+                data = IST_RPPI_MODEL)
+summary(model11_mn)
+```
+
+\
+
+
+**Final outcome** show us Property Sales with Mortgage is highly negative correlated with Mortgage Rates what It is easily expected.
+Turkey Producer Price Index also negative correlated with Mortgage Sales but Foreigner Sales strongly correlated with Foreigner Sales. When Foreigner Sales increase, Mortgage Sales also increasing.\
+
+
+For this study created and built different models. First of all in Model-1 include all variables which have logical correlation coefficients.\
+
+
+
+**Housing Price Model**\
+
+
+
+* Created model with the most logical variables in Model-1\
+
+
+* Eliminated one by one according to the P-Value.\
+
+
+* Housing Price Model\ 
+
+
+
+$$ R² = 0.91 $$
+
+\
+
+
+
+
+$$ log10(HousingPrice) = 0.07xlog10(FRGNRSL)+0.003xRentCPI-0.05xUSDRate+0.07xlog10(CNSTPRMT)+2.175 $$
+
+\
+
+ 
+**Mortgage Sale Model**
+
+1. Model 11 is explaining the **Housing Sales By Using Loan**, all big numbers like thousand reduced with log10. To many irrelevant p-values observed in model 8. Related Index numbers removed from model.
+
+2. P-values which is bigger than 0.05 eliminated one by one and the final model.
+
+3. Final model\
+
+$$R² = 0.83$$
+
+\
+
+
+
+$$ log10(Sales) = 0.197xlog10(FRGNRSL)-0.045xMGRT-0.0007xTRPPI+4.064 $$
+
+\
+
+
+```{r }
+##### 9.3. Residential Property Price Index Monthly Changes - Creating Different Models and See Residuals -  
+#model1_cg <- lm(IST_PRC ~ MG_RT + IST_FGR_SL + IST_PRP_SL + IST_MRTG_SL + CNSTR_TRST + RNT_CPI + IST_CPI + TR_PPI + USD_RT + NEMP_RT + IST_CNST_PT +  IST_OCCP_PT_9 , data = train_cg)
+#summary(model1_cg)
+
+#model2_cg <- lm(IST_PRC ~ MG_RT + IST_FGR_SL + IST_PRP_SL + IST_MRTG_SL + CNSTR_TRST + RNT_CPI + IST_CPI + TR_PPI + USD_RT + NEMP_RT + IST_CNST_PT +  IST_OCCP_PT_9 , data = train_cg)
+#summary(model2_cg)
+
+#model3_cg <- lm(IST_PRC ~ IST_FGR_SL + IST_PRP_SL + IST_MRTG_SL + RNT_CPI + IST_CPI + TR_PPI + IST_CNST_PT +  IST_OCCP_PT_9 , data = train_cg)
+#summary(model3_cg)
+
+#model4_cg <- lm(IST_PRC ~ RNT_CPI + IST_FGR_SL , data = train_cg)
+#summary(model4_cg)
+
+#This model include the change rates of Housing Unit Prices and other variables. So try to explain Unit Prices with different undependent variables.
+```
+
+
+ 
+
+#### Residuals - Outliers\
+
+For all model errors below in the table according to AIC & BIC.\
+
+```{r AIC - BIC }
+
+library(stats)
+AIC(model1_mn, 
+    model2_mn, 
+    model3_mn, 
+    model4_mn, 
+    model5_mn, 
+    model6_mn, 
+    model7_mn, 
+    model8_mn, 
+    model9_mn, 
+    model10_mn,
+    model11_mn)
+
+BIC(model1_mn,
+    model2_mn,
+    model3_mn,
+    model4_mn,
+    model5_mn,
+    model6_mn,
+    model7_mn,
+    model8_mn,
+    model9_mn,
+    model10_mn,
+    model11_mn)
+```
+
+
+Related with Model-7 Residuals, Outliers showed on the plot.\
+
+
+ 
+
+```{r Residuals }
+## model2
+res1_mn <- residuals(model7_mn)
+res1_mn <- as.data.frame(res1_mn)
+ggplot(res1_mn, aes(res1_mn)) + 
+        geom_histogram(fill = 'green', alpha = 0.5)
+plot(model7_mn)
+
+##model2
+## res2 <- residuals(model2)
+## 
+## res2 <- as.data.frame(res2)
+## 
+## ggplot(res2, aes(res2)) + geom_histogram(fill = 'green', alpha = 0.5)
+## 
+## plot(model2)
+
+IST_RPPI_MODEL$predicted.IST_PRC <- predict(model7_mn, IST_RPPI_MODEL)
+pl1_mn <- IST_RPPI_MODEL %>%
+    ggplot(aes(IST_PRC, predicted.IST_PRC)) +
+    geom_point(alpha = 0.80) +
+    stat_smooth(aes(colour = 'black')) +
+    xlab('Actual Housing Unit Prices') +
+    ylab('Predicted Housing Unit Prices') +
+    theme_bw()
+ggplotly(pl1_mn)
+```
+
+
+#### Errors\
+
+Root Mean Square Error of Model-7:\
+
+```{r Error Terms }
+error <- log10(IST_RPPI_MODEL$IST_PRC-IST_RPPI_MODEL$predicted.IST_PRC)
+rmse <- sqrt(mean(error)^2)
+data.frame(error)
+data.frame(rmse)
+```
+Tried for each observations to estimate the real and predicted value in Model-7
+In this case, using logarithm process for the errors because of the model include Housing Price with Log10. 
+So this errors say us differences between Real Housing Price and The model which built to explain housing price.\
+
+ 
+
+
+***
+
+
+
+### Time Series\
+
+**Autoregressive Integrated Moving Average**\
+
+
+
+In statistics and econometric, and in particular in time series analysis, an auto regressive integrated moving average (ARIMA) model is a generalization of an auto regressive moving average (ARMA) model. Both of these models are fitted to time series data either to better understand the data or to predict future points in the series (forecasting). ARIMA models are applied in some cases where **data show evidence of non-stationarity**, where an **initial differencing step** (corresponding to the "integrated" part of the model) can be applied one or more times to eliminate the non-stationary.\
+
+The AR part of ARIMA indicates that the evolving variable of interest is **regressed on its own lagged** (i.e., prior) values. The MA part indicates that the **regression error** is actually a linear combination of *error terms* whose values occurred contemporaneously and at various times in the past. The I (for "integrated") indicates that the data values have been replaced with the difference between their values and the previous values (and this difference process may have been performed more than once). The purpose of each of these features is to make the model fit the data as well as possible.\
+
+Non-seasonal ARIMA models are generally denoted ARIMA(p,d,q) where parameters p, d, and q are non-negative integers, p is the order (number of time lags) of the auto regressive model, d is the degree of difference (the number of times the data have had past values subtracted), and q is the order of the moving-average model. Seasonal ARIMA models are usually denoted ARIMA(p,d,q)(P,D,Q)m, where m refers to the number of periods in each season, and the uppercase P,D,Q refer to the auto regressive, difference, and moving average terms for the seasonal part of the ARIMA model.\
+
+*When two out of the three terms are zeros, the model may be referred to based on the non-zero parameter, dropping "AR", "I" or "MA" from the acronym describing the model. For example, ARIMA (1,0,0) is AR(1), ARIMA(0,1,0) is I(1), and ARIMA(0,0,1) is MA(1).*\
+
+ARIMA models can be estimated following the Box-Jenkins approach.\
+
+
+
+**This analysis help us to understand the housing price changes will be in 6 months**\
+
+
+
+ 
+
+#### Set The Libraries\
+
+Setting the libraries which will using on analyze.\
+
+```{r Libraries }
+library(ggplot2)
+library(forecast)
+library(tseries)
+library(astsa)
+library(readr)
+```
+
+
+#### Data Import\
+
+The data include monthly changes of unit housing prices at Istanbul\
+
+```{r Data Import }
+library(readr)
+IST_UNTPRC_FRCST <- read_csv("IST_UNTPRC_FRCST.csv", 
+                             col_types = cols(DATE = col_date(format = "%d.%m.%Y")))
+head(IST_UNTPRC_FRCST)
+```
+
+
+#### Show The Distribution of Housing Price Index\ 
+
+Distribution of Monthly Housing Price Changes:\
+
+```{r Distribution of Housing Price Changes  }
+ggplot(IST_UNTPRC_FRCST, aes(DATE, IST_PRC_CG)) + 
+    geom_line() + scale_x_date('Years')  + 
+    ylab("Istanbul Housing Price Monthly Changes") +
+            xlab("")
+```
+
+
+#### Clean The Outliers with Tsclean\
+
+Cleaning the trend of monthly changes to get linear, handle with extreme outliers.
+
+```{r Clean The Outliers }
+count_ts = ts(IST_UNTPRC_FRCST[, c('IST_PRC_CG')])
+IST_UNTPRC_FRCST$clean_cnt = tsclean(count_ts)
+ggplot() +
+  geom_line(data = IST_UNTPRC_FRCST, aes(x = DATE, y = clean_cnt)) + 
+    ylab('Cleaned Istanbul Housing Price Monthly Changes')
+```
+
+
+#### Quarterly and Monthly Moving Averages\
+
+Divide into data some different periods to forecast more accuracy.\
+
+```{r Moving Averages }
+IST_UNTPRC_FRCST$cnt_ma1 = ma(IST_UNTPRC_FRCST$clean_cnt, order=1)
+IST_UNTPRC_FRCST$cnt_ma2 = ma(IST_UNTPRC_FRCST$clean_cnt, order=2)
+IST_UNTPRC_FRCST$cnt_ma3 = ma(IST_UNTPRC_FRCST$clean_cnt, order=3)
+IST_UNTPRC_FRCST$cnt_ma6 = ma(IST_UNTPRC_FRCST$clean_cnt, order=6)
+IST_UNTPRC_FRCST$cnt_ma12 = ma(IST_UNTPRC_FRCST$clean_cnt, order=12)
+
+ggplot() +
+  geom_line(data = IST_UNTPRC_FRCST, aes(x = DATE, 
+                                         y = clean_cnt, 
+                                         colour = "Istanbul Housing Monthly Changes Cleaned")) +
+  geom_line(data = IST_UNTPRC_FRCST, aes(x = DATE, 
+                                         y = cnt_ma1,   
+                                         colour = "1 Monthly Moving Average"))  +
+  geom_line(data = IST_UNTPRC_FRCST, aes(x = DATE, 
+                                         y = cnt_ma2,   
+                                         colour = "2 Monthly Moving Average"))  +
+  geom_line(data = IST_UNTPRC_FRCST, aes(x = DATE, 
+                                         y = cnt_ma3,   
+                                         colour = "3 Monthly Moving Average"))  +
+  geom_line(data = IST_UNTPRC_FRCST, aes(x = DATE, 
+                                         y = cnt_ma6,   
+                                         colour = "6 Monthly Moving Average"))  +
+  geom_line(data = IST_UNTPRC_FRCST, aes(x = DATE, 
+                                         y = cnt_ma12,  
+                                         colour = "12 Monthly Moving Average")) +
+  ylab('Istanbul RPPI Monthly Changes')
+```
+
+#### Decompose - Forecasting The Data\
+
+Decomposing data to get rid of seasonality. Chooses the frequency two.
+This means Auto Regressive Term and Moving Avarages according to two months. 
+
+```{r Decompose }
+count_ma = ts(na.omit(IST_UNTPRC_FRCST$cnt_ma2), 
+              frequency=2)
+decomp = stl(count_ma, 
+             s.window = "periodic")
+deseasonal_cnt <- seasadj(decomp)
+plot(decomp)
+```
+
+* Data : The trend isn't in balance and very variable term.
+* Seasonality: Not in seasonality
+* Trend: Changes are going down for the last 5-6 periods.
+* Remainder: Show us the lag of data. In the 16th period.\
+
+#### Stationarity - ADF Test\
+
+```{r ADF Test }
+adf.test(count_ma, 
+         alternative = "stationary")
+```
+
+Now, testing model with ADF - Augmented Dickey Fuller Test, p-value bigger than .05\
+
+
+#### Autocorrelation and Choosing Model Order (ACF)\
+
+Auto correlation, also known as **serial correlation**, is the correlation of a signal with a delayed copy of itself as a function of delay. Informally, it is the similarity between observations as a function of the **time lag** between them. The analysis of auto correlation is a mathematical tool for finding repeating patterns, such as the presence of a periodic signal obscured by noise, or identifying the missing fundamental frequency in a signal implied by its harmonic frequencies. It is often used in signal processing for analyzing functions or series of values, such as time domain signals.
+
+*Different fields of study define autocorrelation differently, and not all of these definitions are equivalent. In some fields, the term is used interchangeably with autocovariance.*
+
+Unit root processes, trend stationary processes, auto regressive processes, and moving average processes are specific forms of processes with auto correlation.\
+
+
+```{r ACF-PACF }
+##autocorrelation 
+Acf(count_ma, main ="", plot = TRUE)
+Pacf(count_ma, main ="",  plot = TRUE)
+#Acf(count_ma, main ="", plot = FALSE)
+#Pacf(count_ma, main ="",  plot = FALSE)
+
+```
+
+There are no stationary in the model, Lags are keeping decrease untill 18th periods.\
+
+
+#### Tune The Model\
+
+```{r Model Tunning }
+count_d1 = diff(deseasonal_cnt, differences = 2)
+plot(count_d1)
+adf.test(count_d1, alternative = "stationary" )
+```
+
+If the p value was bigger than 0.05, Differences should be use again. The model's p-value ~ .01\
+
+This process using errors to forecast previous periods.
+
+
+```{r }
+## count_d2 = diff(count_d1, differences = 1)
+## plot(count_d2)
+## adf.test(count_d2, alternative = "stationary" )
+```
+
+
+```{r ACF-PACF2 }
+Acf(count_d1, 
+    main = "ACF for Differenced Series")
+Pacf(count_d1, 
+     main = "PACF for Differenced Series")
+#Acf(count_d1, 
+#    main = "ACF for Differenced Series", plot = FALSE)
+#Pacf(count_d1, 
+#     main = "PACF for Differenced Series", plot = FALSE)
+```
+
+Lags can be observed in 3rd months because of the model array order is 3. To justify the model lag max should be 3. At 9th month's lag isn't in trust line. Fitting and Autoarima should be try.\
+
+
+ 
+
+#### Fitting an ARIMA Model\
+
+```{r Fitting AutoArima }
+auto.arima(deseasonal_cnt, seasonal = FALSE)
+```
+
+**Auto arima say to model use Auto Regressive Term and Moving Average Two, Difference period is one.**\
+
+ 
+#### Evaluate and Iterate\
+
+```{r Evaluate-Iterate }
+fit1 <- auto.arima(deseasonal_cnt, 
+                   seasonal = FALSE)
+tsdisplay(residuals(fit1), lag.max = 18, 
+          main = "(2,1,2) Model Residuals")
+```
+
+
+```{r }
+#fit2 = arima(deseasonal_cnt, order = c(1,1,1))
+#fit2
+#tsdisplay(residuals(fit2), lag.max = 12, main ="Seasonal Model Residuals")
+```
+
+```{r Forecast Plot }
+fcast <- forecast(fit1, h = 6)
+plot(fcast)
+```
+
+```{r Deseasonal  }
+hold <- window(ts(deseasonal_cnt), start = 60)
+fit_no_holdout = arima(ts(deseasonal_cnt[-c(78:89)]), 
+                       order = c(2,1,2))
+fcast_no_holdout <- forecast(fit_no_holdout, h = 6)
+plot(fcast_no_holdout, main = "")
+lines(ts(deseasonal_cnt))
+```
+
+```{r Seasonality }
+fit_w_seasonality = auto.arima(deseasonal_cnt, seasonal=TRUE)
+fit_w_seasonality
+```
+
+
+#### Forecast The Istanbul Housing Price Changes\
+
+
+ 
+
+**Actual Value of The Price Index**\
+
+
+
+**DATE**      | **IST RPPI** | **CHANGE** | **UNIT PRICES**   | **UNIT PRICE CHANGE**
+--------------|--------------|------------|-------------------| -------------------
+1.01.2019     | 100.15       | -1.84      | 4900.15           | -3.66
+2.02.2019     |	99.63        | -0.52      | 4702.03           | -4.04
+3.03.2019     | 99.34        | -0.29      | 4657.59           | -0.95
+
+
+
+ 
+
+```{r Forecast }
+seas_fcast <- forecast(fit_w_seasonality, h=12)
+plot(seas_fcast)
+summary(seas_fcast)
+```
+
+
+\
+
+
+***
+
+
+\
+
+
+### The Result\
+
+
+
+The result of the study "Housing Prices in Istanbul" are more impose by **Consumer and Producer Index related with Rent, USD Currency Rate, Construction Permits and Foreigner Sales**. Some Index and Rates directly affecting Prices&Sales. The final model below with the equation:\
+
+\
+
+
+***
+
+
+$$ log10(HousingPrice) = 0.07xlog10(FRGNRSL)+0.003xRentCPI-0.05xUSDRate+0.07xlog10(CNSTPRMT)+2.175 $$\
+
+
+
+***
+
+
+
+
+$$ log10(Sales) = 0.197xlog10(FRGNRSL)-0.045xMGRT-0.0007xTRPPI+4.064 $$\
+
+
+
+***
+
+
+
+Regression analysis proved that the other independent variables may affecting less than consumer and procuder index. 
+Time Series Analysis also proved that Housing Market in Istanbul will be negative growth for 6 months as well will be decreasing The Housing Prices for 6 months.\
+
+
+\
+
+
+***
+
+
+\
+
+
+
+### References\
+
+1. Linear Regression, Selva Prabhakaran
+2. Linear Regression with Boston Housing Data set, Sukesh Kumar Pabba
+3. Introduction to Forecasting with ARIMA in R, Ruslana Dalinina
+4. https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average
+5. https://en.wikipedia.org/wiki/Autocorrelation\
+6. Overview Of The Real Estate And Housing Industry , May 2018
+7. Kaya, Aslı , “Determining of The Factors Affects Housing Price in Turkey with Hedonic Price Model ”, CBRT Expertise Qualification Thesis Unpublished,Ankara , 2012
+
+\
+
+
+***
+
+
+\

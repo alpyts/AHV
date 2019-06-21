@@ -1,0 +1,14 @@
+I strongly recommend openning the html documents. 
+The codes can easily openning & closing and It shows plots with a high graphics.
+Indeed the pdf report has attached.
+
+*RE_Model_Forecast.html : Openning Chunk, codes with dark parrent. 
+*RE_Model_Forecast.nb.html: Closed Codes but It can open with cursor.
+
+
+Sincerely Yours,
+
+Alparslan YARIKTAÞ
+alpyts@gmail.com
+
+ 
