@@ -2,13 +2,13 @@
 
 
 
-<center>**EXPLAINING ISTANBUL HOUSING PRICE WITH ECONOMIC INDICATORS & FORECASTING UNIT PRICES CHANGE**</center>\
+<center>**EXPLAINING ISTANBUL HOUSING PRICE WITH ECONOMIC INDICATORS & FORECASTING UNIT PRICES CHANGE**</center>
 
 
 
 
-<center>Alparslan YARIKTAS</center>\
-<center>*516171003*</center>\
+<center>Alparslan YARIKTAS</center>
+<center>*516171003*</center>
 
 
 
@@ -108,3 +108,8 @@ It can easily expect the correlation coefficient aproximately ~ 99%
 The main value of Housing Prices Index and Unit Prices would be the expecting correlation coefficient which is approximately 0.96 but the monthly percentage changes between them wouldn't be the bigger than 80%.
 
 This study also prove this on the next paragraphs.
+
+
+
+
+[Details of](https://github.com/alpyts/AHV "Automatic Housing Valuation")
