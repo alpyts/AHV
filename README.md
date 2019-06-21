@@ -1,4 +1,4 @@
-<center>![](itu.png)</center>\
+<center>![](itu.png)</center>
 
 
 \
